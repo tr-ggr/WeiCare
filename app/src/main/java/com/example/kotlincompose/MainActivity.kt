@@ -5,6 +5,14 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +37,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -41,6 +50,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +66,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.kotlincompose.ui.theme.KotlinComposeTheme
 
 var PrimaryColor = Color.hsv(196F, 0.9F, 0.77F)
@@ -66,155 +79,114 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             KotlinComposeTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    when (current){
-                        "WeiCare" -> WeiCare()
-                        "Contact" -> Contact()
-                        "Notification" -> Notification()
-                        "Me" -> Me()
-                    }
 
+                    Menubar()
 
 
                 }
             }
         }
     }
-}
-
-@Composable
-fun Notification() {
-    Column (
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Red),
-        verticalArrangement = Arrangement.Bottom,
-
-        ){
-        Menubar()
-    }
 
 
-}
-
-@Composable
-fun WeiCare() {
-    Column (
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Blue),
-        verticalArrangement = Arrangement.Bottom,
-
-        ){
-        Menubar()
-    }
-
-}
-
-
-@Composable
-fun Contact() {
-    Column (
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Gray),
-        verticalArrangement = Arrangement.Bottom,
-
-        ){
-        Menubar()
-    }
-
-}
-
-
-@Composable
-fun Me() {
-    Column (
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Green),
-        verticalArrangement = Arrangement.Bottom,
-
-        ){
-        Menubar()
-    }
-
-}
 
 @Composable
 fun Menubar() {
-    Row (
-        modifier = Modifier
-            .fillMaxWidth()
-            .defaultMinSize(minHeight = 75.dp)
-            .background(color = PrimaryColor),
-
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        MenuItem(icon = Icons.Default.Home, name = "WeiCare")
-        MenuItem(icon = Icons.Default.Person, name = "Contact")
-        FloatingActionButton(
-            modifier = Modifier
-                .offset(y = (-20).dp)
-                .size(75.dp),
-            onClick = { /*TODO*/ },
-            shape = CircleShape,
-            elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 5.dp),
-
-            ) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = null)
-        }
-        MenuItem(icon = Icons.Default.Notifications, name = "Notification")
-        MenuItem(icon = Icons.Default.AccountCircle, name = "Me")
+    val navigationController = rememberNavController()
+    var selected by remember{
+        mutableStateOf("WeiCare")
     }
+
+    Scaffold (
+        bottomBar = {
+            BottomAppBar (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = 75.dp)
+                    .background(color = PrimaryColor),
+                containerColor = PrimaryColor
+            ) {
+                MenuItem(icon = Icons.Default.Home,  name = "WeiCare", selected = selected) {
+                    selected = "WeiCare"
+                    navigationController.navigate(Screens.Home.screen){
+                        popUpTo(0)
+                    }
+                }
+                MenuItem(icon = Icons.Default.Person, name = "Contact", selected = selected) {
+                    selected = "Contact"
+                    navigationController.navigate(Screens.Contact.screen){
+                        popUpTo(0)
+                    }
+                }
+                FloatingActionButton(
+                    modifier = Modifier
+
+                        .size(80.dp),
+                    onClick = { /*TODO*/ },
+                    shape = CircleShape,
+                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 5.dp),
+
+                    ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                }
+                MenuItem(icon = Icons.Default.Notifications, name = "Notification", selected = selected) {
+                    selected = "Notification"
+                    navigationController.navigate(Screens.Notification.screen){
+                        popUpTo(0)
+                    }
+                }
+                MenuItem(icon = Icons.Default.AccountCircle, name = "Profile", selected = selected) {
+                    selected = "Profile"
+                    navigationController.navigate(Screens.Profile.screen){
+                        popUpTo(0)
+                    }
+                }
+            }
+        }
+    ) {paddingValues ->
+        NavHost(
+            navController = navigationController,
+            startDestination = Screens.Home.screen,
+            modifier = Modifier.padding(paddingValues),
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+        ){
+            composable(route = Screens.Home.screen){ Home() }
+            composable(route = Screens.Profile.screen){ Profile() }
+            composable(route = Screens.Notification.screen){ Notification() }
+            composable(route = Screens.Contact.screen){ Contact() }
+        }
+
+    }
+
 }
 
 @Composable
-fun MenuItem(icon : ImageVector, name : String) {
-    var active by remember { mutableStateOf("WeiCare") }
+fun MenuItem(icon : ImageVector, name : String, selected : String,  onClick: () -> Unit) {
 
     IconButton(
-        onClick = {
-            active = name
-        },
+        onClick = onClick,
         modifier = Modifier.then(Modifier.size(75.dp))
     ) {
         Column (
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            Icon(imageVector = icon, modifier = Modifier.size(35.dp), contentDescription = null, tint = Color.White)
-            Text(text = name, fontSize = 10.sp, color = Color.White)
+        ) {
+            Icon(
+                imageVector = icon,
+                modifier = Modifier.size(35.dp),
+                contentDescription = null,
+                tint = if (selected == name) Color.Black else Color.White
+            )
+            Text(text = name, fontSize = 10.sp, color = if (selected == name) Color.Black else Color.White)
 
         }
 
-
-
     }
 
 }
 
 
-//@Preview(showBackground = true)
-//@Composable
-//fun NotificationPreview() {
-//    KotlinComposeTheme {
-//        Notification()
-//    }
-//}
-
-@Preview(showBackground = true)
-@Composable
-fun NotificationsPreview() {
-    KotlinComposeTheme {
-        Notification()
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
@@ -223,5 +195,6 @@ fun NavbarPreview() {
         Menubar()
     }
 }
+
 
 

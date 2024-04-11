@@ -70,9 +70,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincompose.ui.theme.KotlinComposeTheme
+import com.example.kotlincompose.ui.theme.*
 
-var PrimaryColor = Color.hsv(196F, 0.9F, 0.77F)
-var current = "WeiCare"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,7 +79,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             KotlinComposeTheme {
 
-                    Menubar()
+                    Main()
 
 
                 }
@@ -91,7 +90,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun Menubar() {
+fun Main() {
     val navigationController = rememberNavController()
     var selected by remember{
         mutableStateOf("WeiCare")
@@ -186,13 +185,11 @@ fun MenuItem(icon : ImageVector, name : String, selected : String,  onClick: () 
 
 }
 
-
-
 @Preview(showBackground = true)
 @Composable
 fun NavbarPreview() {
     KotlinComposeTheme {
-        Menubar()
+        Main()
     }
 }
 

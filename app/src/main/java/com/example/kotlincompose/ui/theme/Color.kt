@@ -10,9 +10,11 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-val PrimaryColor = Color.hsv(196F, 0.9F, 0.77F)
-val SecondaryColor = Color(0xFF191919)
+val BackgroundColor = Color(0xFF121212)
+val ForegroundColor = Color(0xFF191919)
 val TertiaryColor = Color(0xFF242424)
+
+val WeiBlue = Color(0xFF1497c5)
 
 val GoodGreen = Color(0xFF5affaf)
 val RiskyOrange = Color(0xFFf9943b)

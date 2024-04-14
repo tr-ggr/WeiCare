@@ -17,20 +17,19 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.kotlincompose.ui.theme.*
+import com.example.kotlincompose.ui.theme.BackgroundColor
+import com.example.kotlincompose.ui.theme.ChineseSilver
+import com.example.kotlincompose.ui.theme.CleanWhite
 
 @Preview(showBackground = true)
 @Composable
@@ -38,9 +37,11 @@ fun Notification() {
 
     Column(
         modifier = Modifier
-            .background(color = Color.Black)
+            .background(color = BackgroundColor)
             .fillMaxSize()
             .padding(25.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
 
 
 //        verticalArrangement = Arrangement.Center
@@ -48,7 +49,7 @@ fun Notification() {
     ) {
         Text(text ="Notifications", color = CleanWhite, fontSize = 30.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(10.dp))
-        Divider( modifier = Modifier.width(100.dp), thickness = 2.dp, color = CleanWhite)
+        HorizontalDivider(modifier = Modifier.width(100.dp), thickness = 2.dp, color = CleanWhite)
         Spacer(modifier = Modifier.height(30.dp))
 
         Row{
@@ -59,14 +60,14 @@ fun Notification() {
                     .height(30.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = ChineseSilver )
             ) {
-                Text("All", fontSize = 10.sp,fontWeight = FontWeight.Bold, color = Color.Black)
+                Text("All", fontSize = 10.sp,fontWeight = FontWeight.Bold, color = BackgroundColor)
             }
             Button(
                 onClick = { /*TODO*/ },
                 modifier = Modifier
                     .width(100.dp)
                     .height(30.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                colors = ButtonDefaults.buttonColors(containerColor = BackgroundColor)
             ) {
                 Text("Unread", fontSize = 10.sp)
                 Spacer(modifier = Modifier.width(2.dp))
@@ -94,35 +95,27 @@ fun Notification() {
                 colors = ButtonDefaults.buttonColors(containerColor = ChineseSilver )
 
             ) {
-                Text("Read All", fontSize = 10.sp, color = Color.Black)
+                Text("Read All", fontSize = 10.sp, color = BackgroundColor)
             }
         }
 
-        //Notifications
-        Column(
-            modifier = Modifier
-                .padding(5.dp)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
 
-        ){
-            GoodNotificationCard(isRead = true)
-            GoodNotificationCard(isRead = true)
-            RiskyNotificationCard(isRead = false)
-            DangerNotificationCard(isRead = true)
-            RiskyNotificationCard(isRead = false)
-            DangerNotificationCard(isRead = true)
-            GoodNotificationCard(isRead = true)
-            RiskyNotificationCard(isRead = false)
-            DangerNotificationCard(isRead = true)
-            GoodNotificationCard(isRead = true)
-            GoodNotificationCard(isRead = true)
-            RiskyNotificationCard(isRead = false)
-            DangerNotificationCard(isRead = true)
-            RiskyNotificationCard(isRead = false)
-            DangerNotificationCard(isRead = true)
-        }
+        GoodNotificationCard(isRead = true)
+        GoodNotificationCard(isRead = true)
+        RiskyNotificationCard(isRead = false)
+        DangerNotificationCard(isRead = true)
+        RiskyNotificationCard(isRead = false)
+        DangerNotificationCard(isRead = true)
+        GoodNotificationCard(isRead = true)
+        RiskyNotificationCard(isRead = false)
+        DangerNotificationCard(isRead = true)
+        GoodNotificationCard(isRead = true)
+        GoodNotificationCard(isRead = true)
+        RiskyNotificationCard(isRead = false)
+        DangerNotificationCard(isRead = true)
+        RiskyNotificationCard(isRead = false)
+        DangerNotificationCard(isRead = true)
+
 
     }
 }

@@ -68,6 +68,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Main() {
+    val refreshState = remember { mutableStateOf(0) }
     val navigationController = rememberNavController()
     var selected by remember{
         mutableStateOf("WeiCare")
@@ -109,7 +110,7 @@ fun Main() {
                 FloatingActionButton(
                     modifier = Modifier
                         .size(80.dp),
-                    onClick = { /*TODO*/ },
+                    onClick = { refreshState.value++ },
                     shape = CircleShape,
                     elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 5.dp),
 
@@ -138,7 +139,7 @@ fun Main() {
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None },
         ){
-            composable(route = Screens.Home.screen){ Home() }
+            composable(route = Screens.Home.screen){ Home(refreshState) }
             composable(route = Screens.Profile.screen){ Profile() }
             composable(route = Screens.Notification.screen){ Notification() }
             composable(route = Screens.Contact.screen){ Contact() }

@@ -55,13 +55,14 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
+
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation ("androidx.navigation:navigation-compose:2.7.6")
     implementation ("androidx.compose.material3:material3:1.2.1")
-    implementation ("androidx.compose.material:material-icons-extended:1.6.5")
+    implementation ("androidx.compose.material:material-icons-extended:1.6.6")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,5 +70,18 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // For Jetpack Compose.
+    implementation("com.patrykandpatrick.vico:compose:1.14.0")
+    // For `compose`. Creates a `ChartStyle` based on an M2 Material Theme.
+    implementation("com.patrykandpatrick.vico:compose-m2:1.14.0")
+    // For `compose`. Creates a `ChartStyle` based on an M3 Material Theme.
+    implementation("com.patrykandpatrick.vico:compose-m3:1.14.0")
+    // Houses the core logic for charts and other elements. Included in all other modules.
+    implementation("com.patrykandpatrick.vico:core:1.14.0")
+    // For the view system.
+    implementation("com.patrykandpatrick.vico:views:1.14.0")
+
+
 
 }

@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
+import com.example.kotlincompose.ui.theme.TertiaryColor
 import com.patrykandpatrick.vico.compose.component.lineComponent
 import com.patrykandpatrick.vico.compose.component.overlayingComponent
 import com.patrykandpatrick.vico.compose.component.shapeComponent
@@ -41,7 +42,7 @@ import com.patrykandpatrick.vico.core.marker.Marker
 
 @Composable
 internal fun rememberMarker(): Marker {
-    val labelBackgroundColor = MaterialTheme.colorScheme.surface
+    val labelBackgroundColor = TertiaryColor
     val labelBackground = remember(labelBackgroundColor) {
         ShapeComponent(labelBackgroundShape, labelBackgroundColor.toArgb()).setShadow(
             radius = LABEL_BACKGROUND_SHADOW_RADIUS,

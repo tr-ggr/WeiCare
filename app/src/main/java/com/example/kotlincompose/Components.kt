@@ -1,6 +1,8 @@
 package com.example.kotlincompose
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.shapes.Shape
+import android.text.TextUtils
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,6 +24,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Bloodtype
 import androidx.compose.material.icons.filled.BubbleChart
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -61,6 +64,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.Typeface
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -73,6 +77,8 @@ import com.example.kotlincompose.ui.theme.ForegroundColor
 import com.example.kotlincompose.ui.theme.GoodGreen
 import com.example.kotlincompose.ui.theme.RiskyOrange
 import com.example.kotlincompose.ui.theme.TertiaryColor
+import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
+import com.patrykandpatrick.vico.compose.axis.axisLineComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -90,6 +96,7 @@ import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes.rectShape
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
 import com.patrykandpatrick.vico.core.entry.FloatEntry
@@ -101,6 +108,73 @@ import rememberMarker
 fun Preview(){
 //    HomeCard(icon = Icons.Filled.Bloodtype,name = "Blood Pressure", value = "124/88 mmHg")
 //    WeeklyGraph()
+}
+
+@Composable
+fun StateTest(refreshState : MutableState<Int>){
+    var isWeekly by remember { mutableStateOf(true) }
+    val context = LocalContext.current
+    var expanded by remember { mutableStateOf(false) }
+
+    Column (
+        modifier = Modifier
+            .padding(10.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.Start
+    )
+    {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Text("Activity", fontSize = 20.sp, color = CleanWhite, fontWeight = FontWeight.Bold)
+
+            Row(
+                modifier = Modifier
+                    .wrapContentSize(Alignment.Center),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text( if (isWeekly) "Weekly" else "Daily", color = CleanWhite)
+
+                IconButton(onClick = { expanded = !expanded }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "More",
+                        tint = CleanWhite
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Weekly") },
+                        onClick = { isWeekly = true }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Daily") },
+                        onClick = { isWeekly = false }
+                    )
+                }
+            }
+        }
+
+
+
+        if(isWeekly){
+            WeeklyGraph(refreshState = refreshState)
+        } else {
+            DailyGraph(refreshState = refreshState)
+        }
+
+    }
+
+
 }
 
 
@@ -158,6 +232,9 @@ fun WeeklyGraph(refreshState : MutableState<Int>){
                         chart = columnChart(
                             columns = datasetColumnSpec,
                         ),
+
+                        modifier = Modifier
+                            .background(color = ForegroundColor),
                         chartModelProducer = modelProducer,
 
                         startAxis = rememberStartAxis(
@@ -166,7 +243,10 @@ fun WeeklyGraph(refreshState : MutableState<Int>){
                             valueFormatter = { value, _ -> value.toInt().toString() },
                             itemPlacer = AxisItemPlacer.Vertical.default(
                                 maxItemCount = 6
-                            )
+                            ),
+                            label  = axisLabelComponent(
+                                color = CleanWhite
+                            ),
                         ),
 
                         bottomAxis = rememberBottomAxis(
@@ -177,6 +257,9 @@ fun WeeklyGraph(refreshState : MutableState<Int>){
                                 daysOfWeek[value.toInt() % daysOfWeek.size]
                             },
                             guideline = null,
+                            label  = axisLabelComponent(
+                                color = CleanWhite
+                            )
                         ),
 
                         marker = marker,
@@ -188,10 +271,107 @@ fun WeeklyGraph(refreshState : MutableState<Int>){
                 }
         }
 
-        TextButton(modifier = Modifier.fillMaxWidth(),
-            onClick = {}){
-            Text("Refresh", textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+fun DailyGraph(refreshState : MutableState<Int>){
+    val modelProducer = remember { ChartEntryModelProducer() }
+    val datasetForModel = remember { mutableStateListOf(listOf<FloatEntry>()) }
+    val datasetLineSpec = remember { arrayListOf<LineChart.LineSpec>()}
+
+    LaunchedEffect(key1 = refreshState.value){
+        datasetForModel.clear()
+        datasetLineSpec.clear()
+        var xPos = 0f
+        val dataPoints = arrayListOf<FloatEntry>()
+
+        datasetLineSpec.add(
+            LineChart.LineSpec(
+                lineColor = GoodGreen.toArgb(),
+                lineBackgroundShader = DynamicShaders.fromBrush(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(GoodGreen.copy(alpha = 0.5f), GoodGreen.copy(alpha = 0.1f))
+                    )
+                ),
+                pointConnector = DefaultPointConnector(
+                    0f
+                )
+            )
+
+        )
+
+        for(i in 1..24){
+            val randomYFloat = (0..10).random().toFloat()
+            dataPoints.add(FloatEntry(x = xPos, y = randomYFloat))
+            xPos += 1f
         }
+
+        datasetForModel.add(dataPoints)
+
+        modelProducer.setEntries(datasetForModel)
+    }
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(10.dp)){
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+
+        ){
+            if(datasetForModel.isNotEmpty())
+                ProvideChartStyle {
+                    val marker = rememberMarker()
+                    Chart(
+                        modifier = Modifier
+                            .background(color = ForegroundColor),
+                        chart = lineChart(
+                            lines = datasetLineSpec,
+                        ),
+                        chartModelProducer = modelProducer,
+
+                        startAxis = rememberStartAxis(
+                            title = "Top Values",
+                            tickLength = 0.dp,
+                            valueFormatter = { value, _ -> value.toInt().toString() },
+                            itemPlacer = AxisItemPlacer.Vertical.default(
+                                maxItemCount = 6
+                            ),
+                            label  = axisLabelComponent(
+                                color = CleanWhite
+                            )
+
+                        ),
+
+                        bottomAxis = rememberBottomAxis(
+                            title = "Time of Day",
+                            tickLength = 0.dp,
+                            valueFormatter = { value, _ ->
+
+                                        val hoursOfDay = (0..23).map { it.toString().padStart(2, '0') + ":00" }
+                                        hoursOfDay[value.toInt() % hoursOfDay.size]
+
+                            },
+                            itemPlacer = AxisItemPlacer.Horizontal.default(
+                                spacing = 2,
+                                offset = 5
+                            ),
+                            guideline = null,
+                            label  = axisLabelComponent(
+                                color = CleanWhite
+                            )
+
+                        ),
+
+                        marker = marker,
+
+                        chartScrollSpec = rememberChartScrollSpec(true),
+
+                        )
+                }
+        }
+
     }
 }
 

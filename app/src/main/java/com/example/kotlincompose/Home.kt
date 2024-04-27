@@ -102,8 +102,8 @@ fun Home(refreshState : MutableState<Int>) {
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            Text("Activity", fontSize = 20.sp, color = CleanWhite, fontWeight = FontWeight.Bold)
-            WeeklyGraph(refreshState)
+
+            StateTest(refreshState = refreshState)
 
 
         }

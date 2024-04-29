@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">KotlinCompose</string>
+    <string name="title_activity_device">Device</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.kotlincompose
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.graphics.drawable.shapes.Shape
 import android.text.TextUtils
 import android.widget.Toast
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,9 +27,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.BatteryFull
 import androidx.compose.material.icons.filled.Bloodtype
 import androidx.compose.material.icons.filled.BubbleChart
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MonitorHeart
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.SentimentNeutral
@@ -43,6 +47,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -63,12 +68,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.Typeface
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.kotlincompose.ui.theme.AppTheme
 import com.example.kotlincompose.ui.theme.BackgroundColor
 import com.example.kotlincompose.ui.theme.ChineseSilver
 import com.example.kotlincompose.ui.theme.CleanWhite
@@ -89,6 +98,7 @@ import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollState
 import com.patrykandpatrick.vico.compose.component.marker.markerComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
+import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
 import com.patrykandpatrick.vico.core.chart.line.LineChart
@@ -103,23 +113,37 @@ import com.patrykandpatrick.vico.core.entry.FloatEntry
 
 import rememberMarker
 
-@Preview(showBackground = true)
+
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    name = "DefaultPreviewDark"
+)
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    name = "DefaultPreviewLight"
+)
 @Composable
 fun Preview(){
 //    HomeCard(icon = Icons.Filled.Bloodtype,name = "Blood Pressure", value = "124/88 mmHg")
 //    WeeklyGraph()
+    AppTheme{
+
+
+        DeviceCard(name = "Xiaomi", batteryInfo = "100")
+
+    }
 }
 
 @Composable
-fun StateTest(refreshState : MutableState<Int>){
-    var isWeekly by remember { mutableStateOf(true) }
+fun StateTest(){
+    var isWeekly by remember { mutableStateOf(false) }
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
 
     Column (
         modifier = Modifier
             .padding(10.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalAlignment = Alignment.Start
     )
     {
@@ -130,21 +154,22 @@ fun StateTest(refreshState : MutableState<Int>){
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){
-            Text("Activity", fontSize = 20.sp, color = CleanWhite, fontWeight = FontWeight.Bold)
+            Text("Activity", fontSize = 20.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold)
 
             Row(
                 modifier = Modifier
-                    .wrapContentSize(Alignment.Center),
-                horizontalArrangement = Arrangement.Center,
+                    .wrapContentSize(Alignment.Center)
+                    .width(100.dp),
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text( if (isWeekly) "Weekly" else "Daily", color = CleanWhite)
+                Text( if (isWeekly) "Weekly" else "Daily", color = MaterialTheme.colorScheme.onBackground)
 
                 IconButton(onClick = { expanded = !expanded }) {
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
                         contentDescription = "More",
-                        tint = CleanWhite
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
@@ -166,10 +191,11 @@ fun StateTest(refreshState : MutableState<Int>){
 
 
 
-        if(isWeekly){
-            WeeklyGraph(refreshState = refreshState)
+        if(!isWeekly){
+
+            DailyGraph()
         } else {
-            DailyGraph(refreshState = refreshState)
+            WeeklyGraph()
         }
 
     }
@@ -181,13 +207,13 @@ fun StateTest(refreshState : MutableState<Int>){
 
 
 @Composable
-fun WeeklyGraph(refreshState : MutableState<Int>){
-//    val refreshedDataset = remember { mutableIntStateOf(refreshValue) }
+fun WeeklyGraph(){
+    val refreshedDataset = remember { mutableIntStateOf(0) }
     val modelProducer = remember { ChartEntryModelProducer() }
     val datasetForModel = remember { mutableStateListOf(listOf<FloatEntry>()) }
     val datasetColumnSpec = remember { arrayListOf<LineComponent>()}
 
-    LaunchedEffect(key1 = refreshState.value){
+    LaunchedEffect(key1 = refreshedDataset.intValue){
         datasetForModel.clear()
         datasetColumnSpec.clear()
         var xPos = 0f
@@ -219,7 +245,7 @@ fun WeeklyGraph(refreshState : MutableState<Int>){
 
     Column(modifier = Modifier
         .fillMaxWidth()
-        .padding(10.dp)){
+        ){
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -234,7 +260,7 @@ fun WeeklyGraph(refreshState : MutableState<Int>){
                         ),
 
                         modifier = Modifier
-                            .background(color = ForegroundColor),
+                            .background(color = MaterialTheme.colorScheme.secondaryContainer),
                         chartModelProducer = modelProducer,
 
                         startAxis = rememberStartAxis(
@@ -245,8 +271,10 @@ fun WeeklyGraph(refreshState : MutableState<Int>){
                                 maxItemCount = 6
                             ),
                             label  = axisLabelComponent(
-                                color = CleanWhite
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
                             ),
+
+                            sizeConstraint = Axis.SizeConstraint.TextWidth("100"),
                         ),
 
                         bottomAxis = rememberBottomAxis(
@@ -258,7 +286,7 @@ fun WeeklyGraph(refreshState : MutableState<Int>){
                             },
                             guideline = null,
                             label  = axisLabelComponent(
-                                color = CleanWhite
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                         ),
 
@@ -275,12 +303,13 @@ fun WeeklyGraph(refreshState : MutableState<Int>){
 }
 
 @Composable
-fun DailyGraph(refreshState : MutableState<Int>){
+fun DailyGraph(){
+    val refreshedDataset = remember { mutableIntStateOf(0) }
     val modelProducer = remember { ChartEntryModelProducer() }
     val datasetForModel = remember { mutableStateListOf(listOf<FloatEntry>()) }
     val datasetLineSpec = remember { arrayListOf<LineChart.LineSpec>()}
 
-    LaunchedEffect(key1 = refreshState.value){
+    LaunchedEffect(key1 = refreshedDataset.intValue){
         datasetForModel.clear()
         datasetLineSpec.clear()
         var xPos = 0f
@@ -313,8 +342,7 @@ fun DailyGraph(refreshState : MutableState<Int>){
     }
 
     Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(10.dp)){
+        .fillMaxWidth() ){
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -325,7 +353,7 @@ fun DailyGraph(refreshState : MutableState<Int>){
                     val marker = rememberMarker()
                     Chart(
                         modifier = Modifier
-                            .background(color = ForegroundColor),
+                            .background(color = MaterialTheme.colorScheme.secondaryContainer),
                         chart = lineChart(
                             lines = datasetLineSpec,
                         ),
@@ -339,8 +367,10 @@ fun DailyGraph(refreshState : MutableState<Int>){
                                 maxItemCount = 6
                             ),
                             label  = axisLabelComponent(
-                                color = CleanWhite
-                            )
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                            ),
+
+                            sizeConstraint = Axis.SizeConstraint.TextWidth("100"),
 
                         ),
 
@@ -359,7 +389,7 @@ fun DailyGraph(refreshState : MutableState<Int>){
                             ),
                             guideline = null,
                             label  = axisLabelComponent(
-                                color = CleanWhite
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
 
                         ),
@@ -380,23 +410,47 @@ fun HomeCard(icon : ImageVector, name : String, value : String){
     Column (
         modifier = Modifier
             .clip(RoundedCornerShape(15.dp))
-            .background(color = ForegroundColor)
-            .width(160.dp)
-            .height(150.dp)
+            .background(color = MaterialTheme.colorScheme.primaryContainer)
+            .width(180.dp)
+            .height(70.dp)
             .padding(10.dp),
         verticalArrangement = Arrangement.SpaceEvenly,
 
     ){
-        Icon(imageVector =  icon,
-            tint = CleanWhite,
-            contentDescription = null,
-            modifier = Modifier.size(50.dp))
-        Spacer(modifier = Modifier.height(5.dp))
-        Text(name, color = CleanWhite,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp)
-        Text(value, color = ChineseSilver,
-            fontSize = 15.sp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Icon(imageVector =  icon,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                contentDescription = null,
+                modifier = Modifier.size(30.dp))
+            Spacer(modifier = Modifier.height(5.dp))
+            Column (
+                modifier = Modifier
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ){
+                Text(
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold)) {
+                            append(name)
+                        }
+                        append("\n") // New line
+                        withStyle(style = SpanStyle(fontSize = 13.sp)) {
+                            append(value)
+                        }
+                    },
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    lineHeight = 17.sp
+                )
+            }
+
+        }
+
     }
 }
 
@@ -405,69 +459,51 @@ fun TroponinCard(value : Float){
     var icon: ImageVector? = null;
     var color: Color? = null;
     var text: String? = null;
+    var subtext: String? = null;
 
     if(value < 10f){
         icon = Icons.Filled.SentimentVerySatisfied
         color = GoodGreen
-        text = "Normal"
+
+        text = "You're Healthy"
+        subtext = "Keep it up!"
     } else if(value < 20f){
         icon = Icons.Filled.SentimentNeutral
         color = RiskyOrange
-        text = "At Risk"
+        text = "You're at Risk!"
+        subtext = "Take care!"
     } else {
         icon = Icons.Outlined.SentimentVeryDissatisfied
         color = DangerRed
-        text = "In Danger"
+        text = "You're in Danger!"
+        subtext = "Seek help!"
     }
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(150.dp)
-            .clip(RoundedCornerShape(15.dp))
-            .background(color = ForegroundColor)
-            .padding(10.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-            Column (
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(10.dp),
-                verticalArrangement = Arrangement.SpaceBetween
-
-            ){
-                Icon(imageVector = Icons.Filled.BubbleChart,
-                    tint = CleanWhite,
-                    contentDescription = null,
-                    modifier = Modifier.size(50.dp))
-                Spacer(modifier = Modifier.height(5.dp))
-                Text("Troponin - I", color = CleanWhite,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp)
-                Text("0.01 ng/mL", color = ChineseSilver,
-                    fontSize = 15.sp)
-            }
+        Column (
+            modifier = Modifier
+                .width(170.dp)
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(15.dp))
+                .background(color)
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Bottom,
 
 
-            Column (
-                modifier = Modifier
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(color = TertiaryColor)
-                    .width(165.dp)
-                    .fillMaxHeight()
-                    .padding(10.dp),
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.CenterHorizontally
-
-            ){
-                Icon(imageVector = icon,
-                    tint = color, contentDescription = null,
-                    modifier = Modifier.size(50.dp))
-                Text(text, color = CleanWhite, fontSize = 30.sp, fontWeight = FontWeight.Bold)
-                Text("${value} ng/mL", color = ChineseSilver)
-            }
-
-    }
+        ){
+            Icon(imageVector = icon,
+                tint = if (color == GoodGreen) ForegroundColor else MaterialTheme.colorScheme.onTertiaryContainer,
+                contentDescription = null,
+                modifier = Modifier.size(50.dp))
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(text, color = if (color == GoodGreen) ForegroundColor else MaterialTheme.colorScheme.onTertiaryContainer,
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+                lineHeight = 30.sp
+                )
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(subtext, color = if (color == GoodGreen) ForegroundColor else MaterialTheme.colorScheme.onTertiaryContainer,
+                fontSize = 15.sp)
+        }
 }
 
 @Composable
@@ -499,7 +535,7 @@ fun ContactCard(name : String, number : String){
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(15.dp))
-            .background(color = ForegroundColor)
+            .background(color = MaterialTheme.colorScheme.primaryContainer)
             .padding(10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -514,7 +550,7 @@ fun ContactCard(name : String, number : String){
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(40.dp)
-                    .background(color = Color.Blue)
+                    .background(color = MaterialTheme.colorScheme.onPrimaryContainer)
 
 
             ){
@@ -524,8 +560,48 @@ fun ContactCard(name : String, number : String){
             Column(
 
             ) {
-                Text(name, color = CleanWhite, fontWeight = FontWeight.Bold)
-                Text( number , color = ChineseSilver)
+                Text(name, color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.Bold)
+                Text( number , color = MaterialTheme.colorScheme.onPrimaryContainer)
+            }
+        }
+
+        Demo_DropDownMenu()
+    }
+}
+
+@Composable
+fun DeviceCard(name : String, batteryInfo : String){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(15.dp))
+            .background(color = MaterialTheme.colorScheme.primaryContainer)
+            .padding(10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            modifier = Modifier
+                .width(250.dp),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Watch,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(40.dp),
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+
+            Column(
+
+            ) {
+                Text(name, color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.Bold)
+
+                Text( "$batteryInfo%" , color = MaterialTheme.colorScheme.onPrimaryContainer)
+
+
             }
         }
 
@@ -534,35 +610,6 @@ fun ContactCard(name : String, number : String){
 }
 
 
-@Composable
-fun DeviceCard(isActive : Boolean, watchName : String, batteryInfo : String){
-    Column(
-        modifier = Modifier
-            .size(160.dp)
-            .clip(RoundedCornerShape(15.dp))
-            .background(color = ForegroundColor)
-            .border(
-                color = if (isActive) GoodGreen else ForegroundColor,
-                width = 2.dp,
-                shape = RoundedCornerShape(15.dp)
-            )
-            .padding(10.dp),
-        verticalArrangement = Arrangement.SpaceEvenly,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Icon(imageVector = Icons.Default.Watch, tint = CleanWhite, contentDescription = null, modifier = Modifier.size(70.dp))
-            Text("${batteryInfo}%", color = CleanWhite, fontWeight = FontWeight.Bold, fontSize = 35.sp)
-        }
-        Text(text = watchName,  color = CleanWhite,fontWeight = FontWeight.Bold, fontSize = 20.sp)
-
-    }
-}
 
 @Composable
 fun Demo_DropDownMenu() {
@@ -577,7 +624,7 @@ fun Demo_DropDownMenu() {
             Icon(
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = "More",
-                tint = CleanWhite
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
 

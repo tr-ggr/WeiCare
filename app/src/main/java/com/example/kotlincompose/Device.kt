@@ -56,15 +56,16 @@ import com.example.kotlincompose.ui.theme.AppTheme
 )
 
 @Composable
-fun PreviewContact() {
+fun PreviewDevice() {
     AppTheme{
-        Contact()
+        Device()
     }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
+@Preview(showBackground = true)
 @Composable
-fun Contact() {
+fun Device() {
     Column(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background)
@@ -74,37 +75,49 @@ fun Contact() {
         verticalArrangement = Arrangement.spacedBy(40.dp),
     ){
         Column (
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ){
-            Text(text ="Favorites", color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(150.dp)
+                    .background(color = MaterialTheme.colorScheme.primary),
+                contentAlignment = Alignment.Center
 
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalArrangement = Arrangement.spacedBy(20.dp),
 
             ){
-                FavoritesItem(name = "John Carter", number = "911")
-                FavoritesItem(name = "John Carter", number = "911")
-                FavoritesItem(name = "John Carter", number = "911")
+                Icon(imageVector = Icons.Default.Watch, contentDescription = null, tint = Color.White, modifier = Modifier.size(100.dp))
 
             }
+            Text(
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold, fontSize = 50.sp)) {
+                        append("Active")
+                    }
+                    append("\n") // New line
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 25.sp)) {
+                        append("100%")
+                    }
+                },
+                textAlign = TextAlign.Center,
+                lineHeight = 30.sp
 
+            )
 
         }
-
-
 
 
         Column (
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ){
-            Text(text ="Contact list", color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(text ="Device list", color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ){
-                ContactCard(name = "John Smith", "+63178312412")
+                DeviceCard(name = "John Smith", "100")
             }
 
             Spacer(modifier = Modifier.height(30.dp))
@@ -114,41 +127,6 @@ fun Contact() {
 
 
 
-
-    }
-}
-
-@Composable
-fun FavoritesItem(name : String, number : String) {
-    Column (
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Box(
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(75.dp)
-                .background(color = MaterialTheme.colorScheme.onBackground),
-            contentAlignment = Alignment.Center
-
-
-        ){
-
-        }
-        Text(
-            buildAnnotatedString {
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold, fontSize = 15.sp)) {
-                    append(name)
-                }
-                append("\n") // New line
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp)) {
-                    append(number)
-                }
-            },
-            textAlign = TextAlign.Center,
-            lineHeight = 20.sp
-
-        )
 
     }
 }

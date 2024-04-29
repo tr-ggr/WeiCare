@@ -5,4 +5,5 @@ sealed class Screens (val screen : String){
     data object Contact: Screens("contact")
     data object Notification: Screens("notification")
     data object Profile: Screens("profile")
+    data object Device: Screens("device")
 }

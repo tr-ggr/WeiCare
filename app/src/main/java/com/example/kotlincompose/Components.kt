@@ -10,10 +10,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +24,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -407,15 +410,16 @@ fun DailyGraph(){
 }
 
 @Composable
-fun HomeCard(icon : ImageVector, name : String, value : String, roundClip : RoundedCornerShape = RoundedCornerShape(15.dp)){
+fun RowScope.HomeCard(icon : ImageVector, name : String, value : String, roundClip : RoundedCornerShape = RoundedCornerShape(15.dp)){
     Column (
         modifier = Modifier
             .shadow(5.dp, shape = roundClip)
             .clip(roundClip)
             .background(color = MaterialTheme.colorScheme.primaryContainer)
-            .width(175.dp)
+            .width(180.dp)
             .height(70.dp)
-            .padding(10.dp),
+            .padding(10.dp)
+            .weight(1f),
         verticalArrangement = Arrangement.SpaceEvenly,
 
     ){
@@ -457,8 +461,61 @@ fun HomeCard(icon : ImageVector, name : String, value : String, roundClip : Roun
     }
 }
 
+
 @Composable
-fun TroponinCard(value : Float){
+fun ColumnScope.HomeCard(icon : ImageVector, name : String, value : String, roundClip : RoundedCornerShape = RoundedCornerShape(15.dp)){
+    Column (
+        modifier = Modifier
+            .shadow(5.dp, shape = roundClip)
+            .clip(roundClip)
+            .background(color = MaterialTheme.colorScheme.primaryContainer)
+            .width(180.dp)
+            .height(70.dp)
+            .padding(10.dp)
+            .weight(1f),
+        verticalArrangement = Arrangement.SpaceEvenly,
+
+        ){
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f, true),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Icon(imageVector =  icon,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                contentDescription = null,
+                modifier = Modifier.size(30.dp))
+            Spacer(modifier = Modifier.height(5.dp))
+            Column (
+                modifier = Modifier
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ){
+                Text(
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold)) {
+                            append(name)
+                        }
+                        append("\n") // New line
+                        withStyle(style = SpanStyle(fontSize = 13.sp)) {
+                            append(value)
+                        }
+                    },
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    lineHeight = 17.sp
+                )
+            }
+
+        }
+
+    }
+}
+
+@Composable
+fun RowScope.TroponinCard(value : Float){
     var icon: ImageVector? = null;
     var color: Color? = null;
     var text: String? = null;
@@ -489,7 +546,8 @@ fun TroponinCard(value : Float){
                 .fillMaxHeight()
                 .clip(RoundedCornerShape(15.dp, 5.dp, 5.dp, 15.dp))
                 .background(color)
-                .padding(10.dp),
+                .padding(10.dp)
+                .weight(1f),
             verticalArrangement = Arrangement.Bottom,
 
 

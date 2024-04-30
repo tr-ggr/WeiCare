@@ -5,9 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +33,7 @@ import androidx.compose.material.icons.outlined.MonitorWeight
 import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.VerifiedUser
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -109,19 +113,21 @@ fun Profile() {
         }
 
         Column (
-            verticalArrangement = Arrangement.spacedBy(5.dp)
+            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
         ){
             Text(text ="Personal Information", color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.Medium)
             Spacer(modifier = Modifier.height(20.dp))
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().weight(1f),
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
+                verticalAlignment = Alignment.CenterVertically
             ){
                 HomeCard(icon = Icons.Outlined.Info, name = "Age", value = "22 years old", roundClip = RoundedCornerShape(15.dp, 5.dp, 5.dp, 5.dp))
                 HomeCard(icon = Icons.Outlined.MonitorHeart, name = "Heart Status", value = "Very Good",  roundClip = RoundedCornerShape(5.dp, 15.dp, 5.dp, 5.dp))
             }
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().weight(1f),
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
             ){
                 HomeCard(icon = Icons.Outlined.MonitorWeight, name = "Weight", value = "70kg",  roundClip = RoundedCornerShape(5.dp, 5.dp, 5.dp, 15.dp))
@@ -149,4 +155,7 @@ fun Profile() {
         }
     }
 
+
+
 }
+

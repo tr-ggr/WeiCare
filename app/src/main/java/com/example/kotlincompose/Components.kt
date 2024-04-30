@@ -129,7 +129,7 @@ fun Preview(){
     AppTheme{
 
 
-        DeviceCard(name = "Xiaomi", batteryInfo = "100")
+        NotificationCard(isRead = false, type = NotificationType.GOOD)
 
     }
 }
@@ -411,7 +411,7 @@ fun HomeCard(icon : ImageVector, name : String, value : String){
         modifier = Modifier
             .clip(RoundedCornerShape(15.dp))
             .background(color = MaterialTheme.colorScheme.primaryContainer)
-            .width(180.dp)
+            .width(175.dp)
             .height(70.dp)
             .padding(10.dp),
         verticalArrangement = Arrangement.SpaceEvenly,
@@ -419,7 +419,8 @@ fun HomeCard(icon : ImageVector, name : String, value : String){
     ){
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .weight(1f, true),
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -512,7 +513,7 @@ fun ProfileButtons(icon : ImageVector, string : String){
         onClick = { /*TODO*/ },
         modifier = Modifier
             .fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(containerColor = ForegroundColor)
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
 
 
     ) {
@@ -521,8 +522,8 @@ fun ProfileButtons(icon : ImageVector, string : String){
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(imageVector = icon, contentDescription = null, tint = CleanWhite)
-            Text(string, modifier = Modifier.padding(start = 10.dp), color = CleanWhite)
+            Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
+            Text(string, modifier = Modifier.padding(start = 10.dp), color = MaterialTheme.colorScheme.onPrimaryContainer)
         }
 
     }
@@ -646,37 +647,47 @@ fun Demo_DropDownMenu() {
 
 
 @Composable
-fun GoodNotificationCard(isRead : Boolean){
+fun NotificationCard(isRead : Boolean, type : NotificationType){
+    val icon = if (type == NotificationType.GOOD) Icons.Default.FavoriteBorder else if (type == NotificationType.RISKY) Icons.Outlined.Warning else Icons.Outlined.Warning
+    val color = if (type == NotificationType.GOOD) GoodGreen else if (type == NotificationType.RISKY) RiskyOrange else DangerRed
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(15.dp))
-            .background(color = if (isRead) BackgroundColor else ForegroundColor)
+            .background(color = if (isRead) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primaryContainer)
             .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ){
-        Box(
-            modifier = Modifier
-                .size(75.dp)
-                .clip(RoundedCornerShape(15.dp))
-                .background(color = GoodGreen),
-            contentAlignment = Alignment.Center
-
-            
-
+        Row(
+            verticalAlignment = Alignment.CenterVertically
         ){
-            Icon(imageVector = Icons.Default.FavoriteBorder , contentDescription = null, tint = Color.White, modifier = Modifier.size(50.dp))
+            Box(
+                modifier = Modifier
+                    .size(75.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .background(color = color),
+                contentAlignment = Alignment.Center
+
+
+
+            ){
+                Icon(imageVector = icon , contentDescription = null, tint = Color.White, modifier = Modifier.size(50.dp))
+            }
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Column(
+
+            ){
+                Text("You're in Good Shape!", color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.Bold)
+                Text("8:50 am - Today", color = MaterialTheme.colorScheme.onPrimaryContainer, fontSize = 15.sp)
+            }
         }
 
-        Spacer(modifier = Modifier.width(10.dp))
 
-        Column(
-
-        ){
-            Text("8:50 am - Today", color = ChineseSilver, fontSize = 10.sp)
-            Text("You're in Good Shape!", color = Color.White, fontWeight = FontWeight.Bold)
-            Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry.  of Lorem Ipsum.", color = Color.White, fontSize = 10.sp)
-        }
+        Demo_DropDownMenu()
 
 
 
@@ -685,80 +696,6 @@ fun GoodNotificationCard(isRead : Boolean){
 }
 
 
-@Composable
-fun RiskyNotificationCard(isRead : Boolean){
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(15.dp))
-            .background(color = if (isRead) BackgroundColor else ForegroundColor)
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ){
-        Box(
-            modifier = Modifier
-                .size(75.dp)
-                .clip(RoundedCornerShape(15.dp))
-                .background(color = RiskyOrange),
-            contentAlignment = Alignment.Center
-
-
-
-        ){
-            Icon(imageVector = Icons.Outlined.Warning, contentDescription = null, tint = Color.White, modifier = Modifier.size(50.dp))
-        }
-
-        Spacer(modifier = Modifier.width(10.dp))
-
-        Column(
-
-        ){
-            Text("8:50 am - Today", color = ChineseSilver, fontSize = 10.sp)
-            Text("You’re at Risk!", color = Color.White, fontWeight = FontWeight.Bold)
-            Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry.  of Lorem Ipsum.", color = Color.White, fontSize = 10.sp)
-        }
-
-
-    }
-
-}
-
-
-
-@Composable
-fun DangerNotificationCard(isRead : Boolean){
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(15.dp))
-            .background(color = if (isRead) BackgroundColor else ForegroundColor)
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ){
-        Box(
-            modifier = Modifier
-                .size(75.dp)
-                .clip(RoundedCornerShape(15.dp))
-                .background(color = DangerRed),
-            contentAlignment = Alignment.Center
-
-
-
-        ){
-            Icon(imageVector = Icons.Outlined.Warning, contentDescription = null, tint = Color.White, modifier = Modifier.size(50.dp))
-        }
-
-        Spacer(modifier = Modifier.width(10.dp))
-
-        Column(
-
-        ){
-            Text("8:50 am - Today", color = ChineseSilver, fontSize = 10.sp)
-            Text("You were in danger!", color = Color.White, fontWeight = FontWeight.Bold)
-            Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry.  of Lorem Ipsum.", color = Color.White, fontSize = 10.sp)
-        }
-
-
-    }
-
+enum class NotificationType {
+    GOOD, RISKY, DANGER
 }

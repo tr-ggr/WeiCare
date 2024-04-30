@@ -1,12 +1,17 @@
 package com.example.kotlincompose
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,6 +24,7 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,23 +32,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.kotlincompose.ui.theme.*
 
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    name = "DefaultPreviewDark"
+)
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    name = "DefaultPreviewLight"
+)
+@Composable
+fun ProfilePreview(){
+    AppTheme{
+        Profile()
+    }
+}
 
-@Preview(showBackground = true)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun Profile() {
     Column(
         modifier = Modifier
-            .background(color = BackgroundColor)
+            .background(color = MaterialTheme.colorScheme.background)
             .fillMaxSize()
-            .padding(25.dp)
+            .padding(15.dp)
             .verticalScroll(rememberScrollState()),
+
         verticalArrangement = Arrangement.spacedBy(40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
@@ -54,73 +74,49 @@ fun Profile() {
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(200.dp)
-                    .background(color = Color.Blue)
+                    .background(color = MaterialTheme.colorScheme.onBackground)
 
             ){
 
             }
-            Text("Adrian Sajulga", color = CleanWhite, fontSize = 40.sp, fontWeight = FontWeight.Bold)
+            Text("Adrian Sajulga", color = MaterialTheme.colorScheme.onBackground, fontSize = 40.sp, fontWeight = FontWeight.Bold)
         }
 
-        Divider( modifier = Modifier.width(100.dp), thickness = 1.dp, color = CleanWhite)
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(25.dp)
-            ){
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ){
-                    Text("Age", color = CleanWhite, fontSize = 15.sp, fontWeight = FontWeight.Medium)
-                    Text("22 years old", color = ChineseSilver)
-                }
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ){
-                    Text("Average Heart Rate", color = CleanWhite, fontSize = 15.sp, fontWeight = FontWeight.Medium)
-                    Text("62 - 73 bpm", color = ChineseSilver)
-                }
-            }
-
-            Column(
-                verticalArrangement = Arrangement.spacedBy(25.dp)
-            ){
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ){
-                    Text("Heart Status", color = CleanWhite, fontSize = 15.sp, fontWeight = FontWeight.Medium)
-                    Text("Very Good", color = ChineseSilver)
-                }
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ){
-                    Text("Average Troponin Levels", color = CleanWhite, fontSize = 15.sp, fontWeight = FontWeight.Medium)
-                    Text("60 ng/mL", color = ChineseSilver)
-                }
-            }
-
-
-        }
-
-        Divider( modifier = Modifier.width(100.dp), thickness = 1.dp, color = CleanWhite)
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
+        Column (
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ){
-            ProfileButtons(icon = Icons.Outlined.CheckCircle, string = "Tips for Wellness")
-            ProfileButtons(icon = Icons.Outlined.Call, string = "Contact Us")
-            ProfileButtons(icon = Icons.Outlined.Info, string = "Data and Privacy")
-            ProfileButtons(icon = Icons.Outlined.Settings, string = "Account Settings")
+            Text(text ="Personal Information", color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                maxItemsInEachRow = 2
+            ){
+                HomeCard(icon = Icons.Outlined.Info, name = "About", value = "Laine Segundo")
+                HomeCard(icon = Icons.Outlined.Info, name = "About", value = "Laine Segundo")
+                HomeCard(icon = Icons.Outlined.Info, name = "About", value = "Laine Segundo")
+                HomeCard(icon = Icons.Outlined.Info, name = "About", value = "Laine Segundo")
+            }
+
         }
 
+        Column (
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ){
+            Text(text ="Utilities", color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
+            ){
+                ProfileButtons(icon = Icons.Outlined.Call, string = "Call")
+                ProfileButtons(icon = Icons.Outlined.Call, string = "Call")
+                ProfileButtons(icon = Icons.Outlined.Call, string = "Call")
+                ProfileButtons(icon = Icons.Outlined.Call, string = "Call")
+                ProfileButtons(icon = Icons.Outlined.Call, string = "Call")
+            }
 
-
+            Spacer(modifier = Modifier.height(30.dp))
+        }
     }
 
 }

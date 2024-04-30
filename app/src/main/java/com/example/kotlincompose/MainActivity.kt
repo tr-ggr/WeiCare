@@ -4,13 +4,16 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,8 +46,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,7 +67,9 @@ import com.example.kotlincompose.ui.theme.WeiBlue
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
             AppTheme {
                     Main()
@@ -77,13 +85,13 @@ class MainActivity : ComponentActivity() {
 fun Main() {
     val refreshState = remember { mutableStateOf(0) }
     val navigationController = rememberNavController()
-    var selected by remember{
+    var selected =  remember{
         mutableStateOf("WeiCare")
     }
 
     Scaffold (
         floatingActionButton = {
-            if(selected == "WeiCare" || selected == "Profile") null else ExtendedFloatingActionButton(
+            if(selected.value == "WeiCare" || selected.value == "Profile") null else ExtendedFloatingActionButton(
 //                modifier = Modifier.clip(CircleShape),
                 onClick = {  },
                 containerColor = MaterialTheme.colorScheme.tertiary,
@@ -92,17 +100,17 @@ fun Main() {
 
             ){
                 Icon(Icons.Default.Add, contentDescription = "Add")
-                Text(if(selected == "Device") "Add Device" else "Add Contact")
+                Text(if(selected.value == "Device") "Add Device" else "Add Contact")
             }
         },
         topBar = {
-            if(selected == "WeiCare") null else TopAppBar(title = { Text(selected) },
+            if(selected.value == "WeiCare") null else TopAppBar(title = { Text(text= selected.value, fontWeight = FontWeight.Bold) },
                 colors = TopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                    scrolledContainerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
+                    actionIconContentColor = MaterialTheme.colorScheme.onBackground,
+                    scrolledContainerColor = MaterialTheme.colorScheme.background
                 )
             )
         },
@@ -111,9 +119,9 @@ fun Main() {
             BottomAppBar (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .defaultMinSize(minHeight = 75.dp)
-                    .background(color = MaterialTheme.colorScheme.tertiary,),
-                containerColor = MaterialTheme.colorScheme.primary,
+                    .defaultMinSize(minHeight = 50.dp),
+//                    .background(color = MaterialTheme.colorScheme.tertiary,),
+                containerColor = MaterialTheme.colorScheme.tertiary,
 
 
             ) {
@@ -122,27 +130,27 @@ fun Main() {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ){
-                    MenuItem(icon = Icons.Default.Home,  name = "WeiCare", selected = selected) {
-                        selected = "WeiCare"
+                    MenuItem(icon = Icons.Default.Home,  name = "WeiCare", selected = selected.value) {
+                        selected.value = "WeiCare"
                         navigationController.navigate(Screens.Home.screen){
                             popUpTo(0)
                         }
                     }
-                    MenuItem(icon = Icons.Default.Watch, name = "Device", selected = selected) {
-                        selected = "Device"
+                    MenuItem(icon = Icons.Default.Watch, name = "Device", selected = selected.value) {
+                        selected.value = "Device"
                         navigationController.navigate(Screens.Device.screen){
                             popUpTo(0)
                         }
                     }
-                    MenuItem(icon = Icons.Default.Person, name = "Contact", selected = selected) {
-                        selected = "Contact"
+                    MenuItem(icon = Icons.Default.Person, name = "Contact", selected = selected.value) {
+                        selected.value = "Contact"
                         navigationController.navigate(Screens.Contact.screen){
                             popUpTo(0)
                         }
                     }
 
-                    MenuItem(icon = Icons.Default.AccountCircle, name = "Profile", selected = selected) {
-                        selected = "Profile"
+                    MenuItem(icon = Icons.Default.AccountCircle, name = "Profile", selected = selected.value) {
+                        selected.value = "Profile"
                         navigationController.navigate(Screens.Profile.screen){
                             popUpTo(0)
                         }
@@ -159,7 +167,7 @@ fun Main() {
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None },
         ){
-            composable(route = Screens.Home.screen){ Home(navigationController) }
+            composable(route = Screens.Home.screen){ Home(navigationController, selected) }
             composable(route = Screens.Profile.screen){ Profile() }
             composable(route = Screens.Notification.screen){ Notification() }
             composable(route = Screens.Contact.screen){ Contact() }
@@ -175,19 +183,22 @@ fun MenuItem(icon : ImageVector, name : String, selected : String,  onClick: () 
 
     IconButton(
         onClick = onClick,
-        modifier = Modifier.size(75.dp)
+        modifier = Modifier.size(65.dp)
     ) {
         Column (
+
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+
         ) {
             Icon(
                 imageVector = icon,
                 modifier = Modifier.size(35.dp),
                 contentDescription = null,
-                tint = if (selected == name) WeiBlue else MaterialTheme.colorScheme.onPrimary
+                tint = if (selected == name) GoodGreen else MaterialTheme.colorScheme.onPrimary
             )
-            Text(text = name, fontSize = 10.sp, color = if (selected == name) WeiBlue else MaterialTheme.colorScheme.onPrimary)
+
+//            Text(text = name, fontSize = 10.sp, color = if (selected == name) WeiBlue else MaterialTheme.colorScheme.onPrimary)
 
         }
 

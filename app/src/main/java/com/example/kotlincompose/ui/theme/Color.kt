@@ -230,9 +230,3 @@ val DangerRed = Color(0xFFff6949)
 
 val ChineseSilver = Color(0xFFCCCCCC)
 val CleanWhite = Color(0xFFFDFDFD)
-
-
-
-
-
-

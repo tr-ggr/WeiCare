@@ -17,12 +17,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.GeneratingTokens
+import androidx.compose.material.icons.outlined.Height
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.MonitorHeart
+import androidx.compose.material.icons.outlined.MonitorWeight
+import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.VerifiedUser
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,7 +38,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -66,36 +76,56 @@ fun Profile() {
         verticalArrangement = Arrangement.spacedBy(40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .size(200.dp)
+                    .size(75.dp)
                     .background(color = MaterialTheme.colorScheme.onBackground)
 
             ){
 
             }
-            Text("Adrian Sajulga", color = MaterialTheme.colorScheme.onBackground, fontSize = 40.sp, fontWeight = FontWeight.Bold)
+
+            Text(
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 30.sp, fontWeight = FontWeight.Bold)) {
+                        append("Adrian Sajulga")
+                    }
+                    append("\n") // New line
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp)) {
+                        append("Huawei Account")
+                    }
+                }
+            )
+
+
+
         }
 
         Column (
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ){
-            Text(text ="Personal Information", color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            FlowRow(
+            Text(text ="Personal Information", color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.Medium)
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                maxItemsInEachRow = 2
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
             ){
-                HomeCard(icon = Icons.Outlined.Info, name = "About", value = "Laine Segundo")
-                HomeCard(icon = Icons.Outlined.Info, name = "About", value = "Laine Segundo")
-                HomeCard(icon = Icons.Outlined.Info, name = "About", value = "Laine Segundo")
-                HomeCard(icon = Icons.Outlined.Info, name = "About", value = "Laine Segundo")
+                HomeCard(icon = Icons.Outlined.Info, name = "Age", value = "22 years old", roundClip = RoundedCornerShape(15.dp, 5.dp, 5.dp, 5.dp))
+                HomeCard(icon = Icons.Outlined.MonitorHeart, name = "Heart Status", value = "Very Good",  roundClip = RoundedCornerShape(5.dp, 15.dp, 5.dp, 5.dp))
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
+            ){
+                HomeCard(icon = Icons.Outlined.MonitorWeight, name = "Weight", value = "70kg",  roundClip = RoundedCornerShape(5.dp, 5.dp, 5.dp, 15.dp))
+                HomeCard(icon = Icons.Outlined.Height, name = "Height", value = "180 cm",  roundClip = RoundedCornerShape(5.dp, 5.dp, 15.dp, 5.dp))
             }
 
         }
@@ -103,16 +133,16 @@ fun Profile() {
         Column (
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ){
-            Text(text ="Utilities", color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(text ="Utilities", color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.Medium)
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(3.dp),
             ){
                 ProfileButtons(icon = Icons.Outlined.Call, string = "Call")
-                ProfileButtons(icon = Icons.Outlined.Call, string = "Call")
-                ProfileButtons(icon = Icons.Outlined.Call, string = "Call")
-                ProfileButtons(icon = Icons.Outlined.Call, string = "Call")
-                ProfileButtons(icon = Icons.Outlined.Call, string = "Call")
+                ProfileButtons(icon = Icons.Outlined.Info, string = "About")
+                ProfileButtons(icon = Icons.Outlined.Settings, string = "Settings")
+                ProfileButtons(icon = Icons.Outlined.VerifiedUser, string = "Verify")
+                ProfileButtons(icon = Icons.Outlined.People, string = "Support")
             }
 
             Spacer(modifier = Modifier.height(30.dp))

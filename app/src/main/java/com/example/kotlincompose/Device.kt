@@ -112,7 +112,7 @@ fun Device() {
         Column (
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ){
-            Text(text ="Device list", color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(text ="Device list", color = MaterialTheme.colorScheme.onBackground,  fontSize = 15.sp, fontWeight = FontWeight.Medium)
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(5.dp)

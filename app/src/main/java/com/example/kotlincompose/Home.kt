@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Battery6Bar
@@ -65,7 +66,7 @@ import com.example.kotlincompose.ui.theme.CleanWhite
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 //refreshState : MutableState<Int>, navigationController : NavController
-fun Home(navigationController : NavController) {
+fun Home(navigationController : NavController, selected : MutableState<String>) {
 
    Column (
        modifier = Modifier
@@ -86,7 +87,6 @@ fun Home(navigationController : NavController) {
            ){
                Box(
                    modifier = Modifier
-
                        .size(50.dp)
                        .clip(CircleShape)
                        .background(MaterialTheme.colorScheme.onSurface),
@@ -111,8 +111,10 @@ fun Home(navigationController : NavController) {
 
            IconButton(onClick = {
                navigationController.navigate(Screens.Notification.screen){
-               popUpTo(0)
-           } }) {
+                   popUpTo(0)
+               }
+               selected.value = "Notification"
+           }) {
                Icon(
                    imageVector = Icons.Outlined.Notifications,
                    contentDescription = "Home",
@@ -127,17 +129,17 @@ fun Home(navigationController : NavController) {
        Row(
               modifier = Modifier.fillMaxWidth()
                   .height(IntrinsicSize.Min),
-              horizontalArrangement = Arrangement.SpaceBetween,
+              horizontalArrangement = Arrangement.spacedBy(5.dp),
               verticalAlignment = Alignment.CenterVertically
          ) {
            TroponinCard(value = 20f)
            Column (
-               modifier = Modifier.height(IntrinsicSize.Min),
-               verticalArrangement = Arrangement.spacedBy(10.dp)
+               modifier = Modifier.height(IntrinsicSize.Min).weight(1f, false),
+               verticalArrangement = Arrangement.spacedBy(5.dp)
            ){
-               HomeCard(icon = Icons.Filled.BubbleChart, name = "Troponin-I", value = "20.0 ng/mL")
-               HomeCard(icon = Icons.Filled.MonitorHeart, name = "Heart Rate", value = "80 bpm")
-               HomeCard(icon = Icons.Filled.Bloodtype, name = "Blood Pressure", value = "120/80 mmHg")
+               HomeCard(icon = Icons.Filled.BubbleChart, name = "Troponin-I", value = "20.0 ng/mL",  roundClip = RoundedCornerShape(5.dp, 15.dp, 5.dp, 5.dp))
+               HomeCard(icon = Icons.Filled.MonitorHeart, name = "Heart Rate", value = "80 bpm",  roundClip = RoundedCornerShape(5.dp, 5.dp, 5.dp, 5.dp))
+               HomeCard(icon = Icons.Filled.Bloodtype, name = "Blood Pressure", value = "120/80 mmHg",  roundClip = RoundedCornerShape(5.dp, 5.dp, 15.dp, 5.dp))
            }
 
 

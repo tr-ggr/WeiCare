@@ -63,6 +63,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -154,7 +155,7 @@ fun StateTest(){
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){
-            Text("Activity", fontSize = 20.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold)
+            Text("Activity", color = MaterialTheme.colorScheme.onBackground,  fontSize = 15.sp, fontWeight = FontWeight.Medium)
 
             Row(
                 modifier = Modifier
@@ -260,7 +261,7 @@ fun WeeklyGraph(){
                         ),
 
                         modifier = Modifier
-                            .background(color = MaterialTheme.colorScheme.secondaryContainer),
+                            .background(color = MaterialTheme.colorScheme.background),
                         chartModelProducer = modelProducer,
 
                         startAxis = rememberStartAxis(
@@ -271,7 +272,7 @@ fun WeeklyGraph(){
                                 maxItemCount = 6
                             ),
                             label  = axisLabelComponent(
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                                color = MaterialTheme.colorScheme.onBackground
                             ),
 
                             sizeConstraint = Axis.SizeConstraint.TextWidth("100"),
@@ -286,7 +287,7 @@ fun WeeklyGraph(){
                             },
                             guideline = null,
                             label  = axisLabelComponent(
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                         ),
 
@@ -353,7 +354,7 @@ fun DailyGraph(){
                     val marker = rememberMarker()
                     Chart(
                         modifier = Modifier
-                            .background(color = MaterialTheme.colorScheme.secondaryContainer),
+                            .background(color = MaterialTheme.colorScheme.background),
                         chart = lineChart(
                             lines = datasetLineSpec,
                         ),
@@ -367,7 +368,7 @@ fun DailyGraph(){
                                 maxItemCount = 6
                             ),
                             label  = axisLabelComponent(
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                                color = MaterialTheme.colorScheme.onBackground
                             ),
 
                             sizeConstraint = Axis.SizeConstraint.TextWidth("100"),
@@ -389,7 +390,7 @@ fun DailyGraph(){
                             ),
                             guideline = null,
                             label  = axisLabelComponent(
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                                color = MaterialTheme.colorScheme.onBackground
                             )
 
                         ),
@@ -406,10 +407,11 @@ fun DailyGraph(){
 }
 
 @Composable
-fun HomeCard(icon : ImageVector, name : String, value : String){
+fun HomeCard(icon : ImageVector, name : String, value : String, roundClip : RoundedCornerShape = RoundedCornerShape(15.dp)){
     Column (
         modifier = Modifier
-            .clip(RoundedCornerShape(15.dp))
+            .shadow(5.dp, shape = roundClip)
+            .clip(roundClip)
             .background(color = MaterialTheme.colorScheme.primaryContainer)
             .width(175.dp)
             .height(70.dp)
@@ -482,9 +484,10 @@ fun TroponinCard(value : Float){
 
         Column (
             modifier = Modifier
+                .shadow(5.dp, shape = RoundedCornerShape(15.dp, 5.dp, 5.dp, 15.dp))
                 .width(170.dp)
                 .fillMaxHeight()
-                .clip(RoundedCornerShape(15.dp))
+                .clip(RoundedCornerShape(15.dp, 5.dp, 5.dp, 15.dp))
                 .background(color)
                 .padding(10.dp),
             verticalArrangement = Arrangement.Bottom,
@@ -513,17 +516,16 @@ fun ProfileButtons(icon : ImageVector, string : String){
         onClick = { /*TODO*/ },
         modifier = Modifier
             .fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.background)
 
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
-            Text(string, modifier = Modifier.padding(start = 10.dp), color = MaterialTheme.colorScheme.onPrimaryContainer)
+            Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
+            Text(text = string, fontSize = 20.sp, color = MaterialTheme.colorScheme.onBackground)
         }
 
     }
@@ -534,6 +536,7 @@ fun ProfileButtons(icon : ImageVector, string : String){
 fun ContactCard(name : String, number : String){
     Row(
         modifier = Modifier
+            .shadow(5.dp, shape = RoundedCornerShape(15.dp))
             .fillMaxWidth()
             .clip(RoundedCornerShape(15.dp))
             .background(color = MaterialTheme.colorScheme.primaryContainer)
@@ -574,6 +577,7 @@ fun ContactCard(name : String, number : String){
 fun DeviceCard(name : String, batteryInfo : String){
     Row(
         modifier = Modifier
+            .shadow(5.dp, shape = RoundedCornerShape(15.dp))
             .fillMaxWidth()
             .clip(RoundedCornerShape(15.dp))
             .background(color = MaterialTheme.colorScheme.primaryContainer)
@@ -650,9 +654,11 @@ fun Demo_DropDownMenu() {
 fun NotificationCard(isRead : Boolean, type : NotificationType){
     val icon = if (type == NotificationType.GOOD) Icons.Default.FavoriteBorder else if (type == NotificationType.RISKY) Icons.Outlined.Warning else Icons.Outlined.Warning
     val color = if (type == NotificationType.GOOD) GoodGreen else if (type == NotificationType.RISKY) RiskyOrange else DangerRed
+    val text = if (type == NotificationType.GOOD) "You're in Good Shape!" else if (type == NotificationType.RISKY) "You're at Risk!" else "You're in Danger!"
 
     Row(
         modifier = Modifier
+            .shadow(5.dp, shape = RoundedCornerShape(15.dp))
             .fillMaxWidth()
             .clip(RoundedCornerShape(15.dp))
             .background(color = if (isRead) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primaryContainer)
@@ -681,7 +687,7 @@ fun NotificationCard(isRead : Boolean, type : NotificationType){
             Column(
 
             ){
-                Text("You're in Good Shape!", color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.Bold)
+                Text(text, color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.Bold)
                 Text("8:50 am - Today", color = MaterialTheme.colorScheme.onPrimaryContainer, fontSize = 15.sp)
             }
         }

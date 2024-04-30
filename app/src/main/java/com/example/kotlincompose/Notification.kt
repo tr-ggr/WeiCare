@@ -95,7 +95,7 @@ fun Notification() {
                 Row(
                     modifier = Modifier
                         .wrapContentSize(Alignment.Center)
-                        .width(100.dp),
+                        .width(150.dp),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {

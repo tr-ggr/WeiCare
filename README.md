@@ -38,6 +38,8 @@ Light Mode         |  Dark Mode
   - [ ] Test out API calls
   - [ ] Splash screen
   - [ ] App Icon
+  - [ ] fix notifications
+  - [ ] color revamp
 
 
         

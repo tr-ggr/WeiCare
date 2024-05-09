@@ -91,7 +91,7 @@ fun Main() {
 
     Scaffold (
         floatingActionButton = {
-            if(selected.value == "WeiCare" || selected.value == "Profile") null else ExtendedFloatingActionButton(
+            if(selected.value == "WeiCare" || selected.value == "Profile" || selected.value == "Notification") null else ExtendedFloatingActionButton(
 //                modifier = Modifier.clip(CircleShape),
                 onClick = {  },
                 containerColor = MaterialTheme.colorScheme.tertiary,

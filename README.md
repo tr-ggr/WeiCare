@@ -4,14 +4,16 @@
 
 Light Mode         |  Dark Mode
 :-------------------------:|:-------------------------:
-![image](https://github.com/tr-ggr/WeiCare/assets/132801873/4bc0bd59-44bd-4e56-aa4c-f2f7cb0a2fce) |  ![image](https://github.com/tr-ggr/WeiCare/assets/132801873/99e7bdf3-32c7-4eb0-9c91-c8c5218c1d97)
+![image](https://github.com/tr-ggr/WeiCare/assets/132801873/88583922-964a-4a8a-b459-a2b7a5d9e780) |  ![image](https://github.com/tr-ggr/WeiCare/assets/132801873/dca38308-b9aa-4342-be00-fca2e0c7d466)
+
 
 
 ### Notification
 
 Light Mode         |  Dark Mode
 :-------------------------:|:-------------------------:
-![image](https://github.com/tr-ggr/WeiCare/assets/132801873/369c76c3-4b79-4db6-bb47-69e71dad6dad) |  ![image](https://github.com/tr-ggr/WeiCare/assets/132801873/20cb9ef4-eb0b-4b55-b83d-1af38c08bc3b)
+![image](https://github.com/tr-ggr/WeiCare/assets/132801873/d1983bbe-e4ab-4989-a11a-71a41942059a) |  ![image](https://github.com/tr-ggr/WeiCare/assets/132801873/362d6511-bab2-4a3b-b6de-6a186e0f0d33)
+
 
 
 ### Device
